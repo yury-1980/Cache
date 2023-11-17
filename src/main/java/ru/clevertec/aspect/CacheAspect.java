@@ -1,47 +1,101 @@
 package ru.clevertec.aspect;
 
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.yaml.snakeyaml.Yaml;
+import ru.clevertec.cache.LRUCache;
+import ru.clevertec.cache.impl.LRUCacheImpl;
+import ru.clevertec.dao.ClientDao;
+import ru.clevertec.dao.impl.ClientDaoImpl;
+import ru.clevertec.dto.ClientDto;
+import ru.clevertec.entity.Client;
+import ru.clevertec.mapper.ClientMapper;
+import ru.clevertec.mapper.ClientMapperImpl;
+import ru.clevertec.valid.Validator;
+import ru.clevertec.valid.impl.ValidatorImpl;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
+import java.io.InputStream;
+import java.util.Map;
 
 @Slf4j
 @Aspect
 public class CacheAspect {
 
-    private FileWriter fileWriter;
+    private static final String CONFIG_CACHE = "configCache.yaml";
+    private static final String CAPACITY = "capacity";
 
-    public CacheAspect() {
+    private static Map<String, Integer> readCapacityYaml() {
 
-        try {
-            fileWriter = new FileWriter("log.txt", false);
-        } catch (IOException e) {
-            log.info("Invalid file");
+        Yaml yaml = new Yaml();
+        InputStream inputStream = CacheAspect.class.getClassLoader()
+                .getResourceAsStream(CONFIG_CACHE);
+
+        return yaml.load(inputStream);
+    }
+
+    private static final Map<String, Integer> STRING_INTEGER_MAP = readCapacityYaml();
+    private final LRUCache<Long, Client> cache = new LRUCacheImpl<>(STRING_INTEGER_MAP.get(CAPACITY));
+    private final ClientDao clientDao = new ClientDaoImpl();
+    private final ClientMapper mapper = new ClientMapperImpl();
+    private final Validator validator = new ValidatorImpl();
+
+    @Around("execution(* ru.clevertec.service.impl.ClientServiceImpl.findById(..))")
+    public ClientDto aroundFindById(ProceedingJoinPoint joinPoint) {
+        Object[] args = joinPoint.getArgs();
+        Long id = (Long) args[0];
+        Client client = cache.get(id);
+
+        if (client != null) {
+            return mapper.toClientDto(client);
+
+        } else {
+            try {
+                client = clientDao.findById(id).get();
+                cache.put(client.getId(), client);
+
+                return mapper.toClientDto(client);
+
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
-    @AfterReturning(pointcut = "execution(* ru.clevertec.service.impl.AccountServiceImpl.*(..))", returning = "result")
-    public void logMethodCall(JoinPoint joinPoint, Object result) {
+    @Around("execution(* ru.clevertec.service.impl.ClientServiceImpl.create(..))")
+    public Client aroundCreate(ProceedingJoinPoint joinPoint) {
+        Object[] args = joinPoint.getArgs();
+        ClientDto clientDto = (ClientDto) args[0];
+        validator.validateClientDto(clientDto);
+        Client client = mapper.toClient(clientDto);
 
-        String methodName = joinPoint.getSignature().getName();
-        String arguments = Arrays.toString(joinPoint.getArgs());
-        String logMessage = String.format("Method '%s' called with arguments %s%n", methodName, arguments);
-        String resultMessage = String.format("Method '%s' returned result: %s%n", methodName, result);
+        Client newClient = clientDao.create(client);
+        cache.put(newClient.getId(), newClient);
 
-        log.info(logMessage);
-        log.info(resultMessage);
+        return newClient;
+    }
 
-        try {
-            fileWriter.write(String.valueOf(new Date()) + " " + logMessage);
-            fileWriter.write(String.valueOf(new Date()) + " " + resultMessage);
-            fileWriter.flush();
-        } catch (IOException e) {
-            log.info("Recording failed!");
-        }
+    @Around("execution(* ru.clevertec.service.impl.ClientServiceImpl.update(..))")
+    public Client aroundUpdate(ProceedingJoinPoint joinPoint) {
+        Object[] args = joinPoint.getArgs();
+        Long id = (Long) args[0];
+        ClientDto clientDto = (ClientDto) args[1];
+        validator.validateClientDto(clientDto);
+        Client client = mapper.toClient(clientDto);
+
+        Client newClient = clientDao.update(id, client);
+        cache.put(newClient.getId(), newClient);
+
+        return newClient;
+    }
+
+    @Around("execution(* ru.clevertec.service.impl.ClientServiceImpl.delete(..))")
+    public void aroundDelete(ProceedingJoinPoint joinPoint) {
+        Object[] args = joinPoint.getArgs();
+        Long id = (Long) args[0];
+        clientDao.delete(id);
+        cache.remove(id);
+
     }
 }

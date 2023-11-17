@@ -11,11 +11,11 @@ import java.util.Map;
 public class ConnectionPoolManager {
 
     private static final BasicDataSource dataSource;
-    public static final String URL = "url";
-    public static final String USER_NAME = "username";
-    public static final String PASSWORD = "password";
-    public static final String DRIVER = "driver";
-    public static final String CONFIG_DB = "configDB.yaml";
+    private static final String URL = "url";
+    private static final String USER_NAME = "username";
+    private static final String PASSWORD = "password";
+    private static final String DRIVER = "driver";
+    private static final String CONFIG_DB = "config.yaml";
 
     private static Map<String, String> readConfigDBYaml() {
 
@@ -26,14 +26,14 @@ public class ConnectionPoolManager {
         return yaml.load(inputStream);
     }
 
-    private static final Map<String, String> stringMap = readConfigDBYaml();
+    private static final Map<String, String> STRING_MAP = readConfigDBYaml();
 
     static {
         dataSource = new BasicDataSource();
-        dataSource.setUrl(stringMap.get(URL));
-        dataSource.setUsername(stringMap.get(USER_NAME));
-        dataSource.setPassword(stringMap.get(PASSWORD));
-        dataSource.setDriverClassName(stringMap.get(DRIVER));
+        dataSource.setUrl(STRING_MAP.get(URL));
+        dataSource.setUsername(STRING_MAP.get(USER_NAME));
+        dataSource.setPassword(STRING_MAP.get(PASSWORD));
+        dataSource.setDriverClassName(STRING_MAP.get(DRIVER));
         dataSource.setDefaultAutoCommit(false);
     }
 

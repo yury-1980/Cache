@@ -1,31 +1,37 @@
 package ru.clevertec.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
+@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClientDto {
 
-    @NotNull
-    @Pattern(regexp = "^[а-яА-Я\\s]{2,10}$")
+    @NotEmpty(message = "Name should not  be empty!")
+    @Size(min = 2, max = 10, message = "Name should be from 2 to 10 characters")
+    @Pattern(regexp = "^[Ёёа-яА-Я\\s]+$", message = "Имя должно состоять из русских букв!")
     private String clientName;
 
-    @NotNull
-    @Pattern(regexp = "^[а-яА-Я\\s]{2,20}$")
+    @NotEmpty
+    @Pattern(regexp = "^[Ёёа-яА-Я\\s]{2,20}$")
     private String familyName;
 
-    @NotNull
-    @Pattern(regexp = "^[а-яА-Я\\s]{2,10}$")
-    private String surname;
+    @NotEmpty
+    @Pattern(regexp = "^[Ёёа-яА-Я\\s]{2,20}$")
+    private String surName;
 
     @NotNull
-    @Pattern(regexp = "((19|20)\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]{1})")
-    LocalDate birthday;
+    @PastOrPresent
+    LocalDate birthDay;
 }

@@ -1,6 +1,7 @@
 plugins {
     id 'java'
-    id 'io.freefair.aspectj.post-compile-weaving' version '8.2.2'
+    id 'io.freefair.aspectj.post-compile-weaving' version '8.0.0-rc4'
+    id "io.freefair.lombok" version "6.5.1"
 }
 
 group = 'ru.clevertec'
@@ -22,12 +23,14 @@ repositories {
 
 ext {
     mapstructVersion = '1.5.5.Final'
-    lombokVersion = '1.18.28'
+//    lombokVersion = '1.18.28'
 }
 
 dependencies {
-    implementation "org.projectlombok:lombok:${lombokVersion}"
-    annotationProcessor "org.projectlombok:${lombokVersion}"
+//    implementation "org.projectlombok:lombok:${lombokVersion}"
+//    annotationProcessor "org.projectlombok:${lombokVersion}"
+    implementation 'ch.qos.logback:logback-classic:1.4.11'
+
 
     implementation 'org.aspectj:aspectjrt:1.9.19'
 
@@ -38,8 +41,6 @@ dependencies {
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 
-
-    implementation 'ch.qos.logback:logback-classic:1.4.11'
     implementation 'org.postgresql:postgresql:42.3.8'
     implementation 'org.yaml:snakeyaml:2.0'
 

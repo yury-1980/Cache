@@ -1,11 +1,13 @@
 package ru.clevertec.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,5 +17,5 @@ public class Client {
     private String clientName;
     private String familyName;
     private String surName;
-    LocalDate birthDay;
+    private LocalDate birthDay;
 }
