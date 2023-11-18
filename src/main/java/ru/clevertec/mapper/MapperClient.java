@@ -7,7 +7,7 @@ import ru.clevertec.entity.Client;
 import java.time.LocalDate;
 
 @Mapper
-public interface ClientMapper {
+public interface MapperClient {
 
     ClientDto toClientDto(Client client);
 

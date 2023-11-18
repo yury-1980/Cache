@@ -9,7 +9,7 @@ public interface ClientService {
 
     ClientDto findById(long id);
 
-    List<ClientDto> findByAll();
+    List<ClientDto> findByAll(long num);
 
     Client create(ClientDto clientDto);
 

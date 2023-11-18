@@ -12,20 +12,17 @@ import java.util.Set;
 public class ValidatorImpl implements Validator {
 
     @Override
-    public void validateClientDto(ClientDto  clientDto) {
+    public void validateClientDto(ClientDto  clientDto) throws ClientDtoNotValidate {
         javax.validation.Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
         Set<ConstraintViolation<ClientDto>> violations = validator.validate(clientDto);
 
         if (!violations.isEmpty()) {
-            try {
+
                 for (ConstraintViolation<ClientDto> violation : violations) {
                     System.out.println(violation.getMessage());
                 }
                 throw new ClientDtoNotValidate();
-            } catch (ClientDtoNotValidate notValidate) {
-                notValidate.printStackTrace();
-            }
         }
     }
 }

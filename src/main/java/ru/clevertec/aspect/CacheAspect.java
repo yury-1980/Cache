@@ -12,8 +12,9 @@ import ru.clevertec.dao.ConnectionPoolManager;
 import ru.clevertec.dao.impl.ClientDaoImpl;
 import ru.clevertec.dto.ClientDto;
 import ru.clevertec.entity.Client;
-import ru.clevertec.mapper.ClientMapper;
-import ru.clevertec.mapper.ClientMapperImpl;
+import ru.clevertec.exception.ClientDtoNotValidate;
+import ru.clevertec.mapper.MapperClient;
+import ru.clevertec.mapper.MapperClientImpl;
 import ru.clevertec.valid.Validator;
 import ru.clevertec.valid.impl.ValidatorImpl;
 
@@ -39,7 +40,7 @@ public class CacheAspect {
     private static final Map<String, Integer> STRING_INTEGER_MAP = readCapacityYaml();
     private final LRUCache<Long, Client> cache = new LRUCacheImpl<>(STRING_INTEGER_MAP.get(CAPACITY));
     private final ClientDao clientDao = new ClientDaoImpl(new ConnectionPoolManager());
-    private final ClientMapper mapper = new ClientMapperImpl();
+    private final MapperClient mapper = new MapperClientImpl();
     private final Validator validator = new ValidatorImpl();
 
     @Around("execution(* ru.clevertec.service.impl.ClientServiceImpl.findById(..))")
@@ -68,9 +69,14 @@ public class CacheAspect {
     public Client aroundCreate(ProceedingJoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
         ClientDto clientDto = (ClientDto) args[0];
-        validator.validateClientDto(clientDto);
-        Client client = mapper.toClient(clientDto);
 
+        try {
+            validator.validateClientDto(clientDto);
+        }catch (ClientDtoNotValidate notValidate){
+            notValidate.printStackTrace();
+        }
+
+        Client client = mapper.toClient(clientDto);
         Client newClient = clientDao.create(client);
         cache.put(newClient.getId(), newClient);
 
@@ -82,9 +88,14 @@ public class CacheAspect {
         Object[] args = joinPoint.getArgs();
         Long id = (Long) args[0];
         ClientDto clientDto = (ClientDto) args[1];
-        validator.validateClientDto(clientDto);
-        Client client = mapper.toClient(clientDto);
 
+        try {
+            validator.validateClientDto(clientDto);
+        }catch (ClientDtoNotValidate notValidate){
+            notValidate.printStackTrace();
+        }
+
+        Client client = mapper.toClient(clientDto);
         Client newClient = clientDao.update(id, client);
         cache.put(newClient.getId(), newClient);
 
