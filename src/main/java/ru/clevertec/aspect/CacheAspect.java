@@ -8,6 +8,7 @@ import org.yaml.snakeyaml.Yaml;
 import ru.clevertec.cache.LRUCache;
 import ru.clevertec.cache.impl.LRUCacheImpl;
 import ru.clevertec.dao.ClientDao;
+import ru.clevertec.dao.ConnectionPoolManager;
 import ru.clevertec.dao.impl.ClientDaoImpl;
 import ru.clevertec.dto.ClientDto;
 import ru.clevertec.entity.Client;
@@ -37,7 +38,7 @@ public class CacheAspect {
 
     private static final Map<String, Integer> STRING_INTEGER_MAP = readCapacityYaml();
     private final LRUCache<Long, Client> cache = new LRUCacheImpl<>(STRING_INTEGER_MAP.get(CAPACITY));
-    private final ClientDao clientDao = new ClientDaoImpl();
+    private final ClientDao clientDao = new ClientDaoImpl(new ConnectionPoolManager());
     private final ClientMapper mapper = new ClientMapperImpl();
     private final Validator validator = new ValidatorImpl();
 

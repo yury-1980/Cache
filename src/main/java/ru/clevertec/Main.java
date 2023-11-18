@@ -1,6 +1,7 @@
 package ru.clevertec;
 
 import ru.clevertec.dao.ClientDao;
+import ru.clevertec.dao.ConnectionPoolManager;
 import ru.clevertec.dao.impl.ClientDaoImpl;
 import ru.clevertec.dto.ClientDto;
 import ru.clevertec.entity.Client;
@@ -17,15 +18,15 @@ public class Main {
     public static void main(String[] args) {
         Client client = Client.builder().clientName("Юра").familyName("Яшков").surName("Владимирович")
                 .birthDay(LocalDate.parse("2001-01-01")).build();
-        ClientDao clientDao = new ClientDaoImpl();
+        ClientDao clientDao = new ClientDaoImpl(new ConnectionPoolManager());
         ClientMapper clientMapper = new ClientMapperImpl();
         Validator validator = new ValidatorImpl();
         ClientDto clientDto = new ClientDto("Лёшаввы", "Петров", "Петрович",
                 LocalDate.parse("2000-01-01"));
 
         ClientService clientService = new ClientServiceImpl(clientDao, clientMapper, validator);
-//        ClientDto byId = clientService.findById(1);
-//        System.out.println("byId = " + byId);
+        ClientDto byId = clientService.findById(1);
+        System.out.println("byId = " + byId);
 
 //        List<ClientDto> byAll = clientService.findByAll();
 //        System.out.println("byAll = " + byAll);
@@ -35,7 +36,7 @@ public class Main {
 
 //        System.out.println(clientService.update(23, clientDto));
 
-        clientService.delete(23);
+//        clientService.delete(23);
 
 
 //        System.out.println(clientDao.findById(1));

@@ -1,10 +1,12 @@
 package ru.clevertec.cache.impl;
 
+import lombok.ToString;
 import ru.clevertec.cache.LRUCache;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@ToString
 public class LRUCacheImpl<V> implements LRUCache<Long, V> {
 
     Node<V> head;
