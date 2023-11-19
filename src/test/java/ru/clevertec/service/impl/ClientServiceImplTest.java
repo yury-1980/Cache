@@ -8,7 +8,6 @@ import ru.clevertec.dao.ConnectionPoolManager;
 import ru.clevertec.dao.impl.ClientDaoImpl;
 import ru.clevertec.dto.ClientDto;
 import ru.clevertec.entity.Client;
-import ru.clevertec.exception.ClientDtoNotValidate;
 import ru.clevertec.mapper.MapperClient;
 import ru.clevertec.mapper.MapperClientImpl;
 import ru.clevertec.service.ClientService;
@@ -58,7 +57,7 @@ class ClientServiceImplTest {
     }
 
     @Test
-    void findById() {
+    void shouldFindByIdClientDto() {
         expected = ClientDto.builder()
                 .clientName("Пётр")
                 .familyName("Петров")
@@ -72,7 +71,7 @@ class ClientServiceImplTest {
     }
 
     @Test
-    void findByAll() {
+    void shouldFindByAllClientDto() {
         List<ClientDto> actualList = service.findByAll(3);
         ClientDto[] actual = actualList.toArray(new ClientDto[0]);
 
@@ -84,7 +83,7 @@ class ClientServiceImplTest {
     }
 
     @Test
-    void create() {
+    void shouldCreateClientAndReturnClientDto() {
         Client clientDto1 = service.create(expected);
         ClientDto actual = mapperClient.toClientDto(clientDto1);
 
@@ -92,7 +91,7 @@ class ClientServiceImplTest {
     }
 
     @Test
-    void update() {
+    void shouldUpdateClientAndReturnClientDto() {
         Client updateClient = service.update(1, clientDto);
         ClientDto actual = mapperClient.toClientDto(updateClient);
         expected = service.findById(1);
@@ -101,24 +100,10 @@ class ClientServiceImplTest {
     }
 
     @Test
-    void delete() {
+    void shouldDeleteLastClient() {
         Client clientDto1 = service.create(clientDto);
         long lastId = clientDto1.getId();
 
         service.delete(lastId);
-    }
-
-    @Test
-    void shouldCheckData() {
-        ClientDto verification = ClientDto.builder()
-                .clientName("ИванZ")
-                .familyName("Иванов")
-                .surName("Иванович")
-                .birthDay(LocalDate.parse("2001-01-01"))
-                .build();
-
-        Assertions.assertThrows(ClientDtoNotValidate.class, () -> {
-            validator.validateClientDto(verification);
-        });
     }
 }

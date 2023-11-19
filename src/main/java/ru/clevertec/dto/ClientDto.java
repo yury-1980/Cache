@@ -1,5 +1,6 @@
 package ru.clevertec.dto;
 
+import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +13,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
+@XmlRootElement
 @Builder
 @Data
 @AllArgsConstructor
