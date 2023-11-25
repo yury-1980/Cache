@@ -72,7 +72,7 @@ public class CacheAspect {
 
         try {
             validator.validateClientDto(clientDto);
-        }catch (ClientDtoNotValidate notValidate){
+        } catch (ClientDtoNotValidate notValidate) {
             notValidate.printStackTrace();
         }
 
@@ -91,7 +91,7 @@ public class CacheAspect {
 
         try {
             validator.validateClientDto(clientDto);
-        }catch (ClientDtoNotValidate notValidate){
+        } catch (ClientDtoNotValidate notValidate) {
             notValidate.printStackTrace();
         }
 
@@ -108,6 +108,5 @@ public class CacheAspect {
         Long id = (Long) args[0];
         clientDao.delete(id);
         cache.remove(id);
-
     }
 }
