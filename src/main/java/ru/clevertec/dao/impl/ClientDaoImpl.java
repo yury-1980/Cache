@@ -47,7 +47,7 @@ public class ClientDaoImpl implements ClientDao {
             client = new Client(clientId, clientName, familyName, surName, birthDay);
 
         } catch (SQLException e) {
-            log.info("Failed to select client!");
+            log.info("Failed to select client!" + e);
         } finally {
             closes(resultSet, connection, preparedStatement);
         }
@@ -82,7 +82,7 @@ public class ClientDaoImpl implements ClientDao {
             }
 
         } catch (SQLException e) {
-            log.info("Connection not found.");
+            log.info("Connection not found." + e);
         } finally {
             closes(resultSet, connection, preparedStatement);
         }
@@ -113,7 +113,7 @@ public class ClientDaoImpl implements ClientDao {
             client.setId(lastId);
 
         } catch (SQLException e) {
-            log.info("Connection not found.");
+            log.info("Connection not found." + e);
         } finally {
             try {
 
@@ -146,8 +146,10 @@ public class ClientDaoImpl implements ClientDao {
             preparedStatement.executeUpdate();
             connection.commit();
 
+            client.setId(id);
+
         } catch (SQLException e) {
-            log.info("Connection not found.");
+            log.info("Connection not found." + e);
         } finally {
             try {
 
@@ -177,7 +179,7 @@ public class ClientDaoImpl implements ClientDao {
             connection.commit();
 
         } catch (SQLException e) {
-            log.info("Delete failed!");
+            log.info("Delete failed!" + e);
         } finally {
             try {
 

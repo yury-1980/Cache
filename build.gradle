@@ -29,6 +29,9 @@ ext {
 
 dependencies {
     implementation 'org.codehaus.mojo:jaxb2-maven-plugin:3.1.0'
+//    implementation 'com.itextpdf:itextpdf:5.5.13.3'
+    implementation 'com.itextpdf:itext7-core:7.2.4'
+
 
     implementation 'ch.qos.logback:logback-classic:1.4.11'
     implementation 'org.aspectj:aspectjrt:1.9.19'
@@ -65,7 +68,7 @@ liquibase {
     }
 }
 
-compileJava.dependsOn(update)
+//compileJava.dependsOn(update)
 
 test {
     useJUnitPlatform()

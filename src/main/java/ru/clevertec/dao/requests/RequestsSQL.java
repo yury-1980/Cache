@@ -30,12 +30,4 @@ public class RequestsSQL {
             DELETE FROM public.client
             WHERE id = ?
             """;
-
-    public static final String NEXT_VAL = "SELECT NEXTVAL(?);";
-
-    public static final String CURRVAL_ID_CLIENT = """
-            SELECT last_insert_rowid();
-            """;
-
-    public static final String CLIENT_ID_SEQ = "client_id_seq";
 }
