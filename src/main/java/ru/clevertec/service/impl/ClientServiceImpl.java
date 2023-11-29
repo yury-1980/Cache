@@ -26,6 +26,7 @@ public class ClientServiceImpl implements ClientService {
 
     /**
      * Ищет в Б.Д. клиента по его идентификатору.
+     *
      * @param id идентификатор продукта.
      * @return Найденный клиент преобразованный в ClientDto.
      */
@@ -38,6 +39,7 @@ public class ClientServiceImpl implements ClientService {
 
     /**
      * Возвращает из Б.Д. заданное количество клиентов.
+     *
      * @param num Число на выбор определённого количества клиентов.
      * @return Возвращает найденное количество клиентов и помещает их в List.
      */
@@ -50,7 +52,8 @@ public class ClientServiceImpl implements ClientService {
     }
 
     /**
-     *  Записывает в Б.Д. одного клиента и возвращает его если запись успешна.
+     * Записывает в Б.Д. одного клиента и возвращает его если запись успешна.
+     *
      * @param clientDto Записываемый в Б.Д. клиент.
      * @return Возвращает клиента если запись успешна.
      */
@@ -70,7 +73,8 @@ public class ClientServiceImpl implements ClientService {
 
     /**
      * Обновляет одного заданного клиента в Б.Д.
-     * @param id Идентификатор обновляемого клиента.
+     *
+     * @param id        Идентификатор обновляемого клиента.
      * @param clientDto Клиент с обновлёнными данными.
      * @return Возврат обновлённого клиента в случае успеха.
      */
@@ -90,6 +94,7 @@ public class ClientServiceImpl implements ClientService {
 
     /**
      * Удаляет одного заданного клиента из Б.Д.
+     *
      * @param id Идентификатор удаляемого клиента
      */
     @Override

@@ -25,6 +25,8 @@ repositories {
 ext {
     mapstructVersion = '1.5.5.Final'
     postgresqlVersion = '42.3.8'
+    junitVersion = '5.9.2'
+    mockitoVersion = '5.6.0'
 }
 
 dependencies {
@@ -53,8 +55,9 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'org.apache.commons:commons-dbcp2:2.9.0'
 
-    testImplementation platform('org.junit:junit-bom:5.9.1')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 }
 
 liquibase {
@@ -68,7 +71,7 @@ liquibase {
     }
 }
 
-//compileJava.dependsOn(update)
+compileJava.dependsOn(update)
 
 test {
     useJUnitPlatform()

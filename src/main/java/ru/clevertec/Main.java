@@ -6,18 +6,21 @@ import ru.clevertec.dao.ClientDao;
 import ru.clevertec.dao.ConnectionPoolManager;
 import ru.clevertec.dao.impl.ClientDaoImpl;
 import ru.clevertec.dto.ClientDto;
+import ru.clevertec.entity.Client;
 import ru.clevertec.gson.LocalDateAdapter;
 import ru.clevertec.gson.LocalDateSerializer;
 import ru.clevertec.gson.OffsetDateTimeAdapter;
 import ru.clevertec.gson.OffsetDateTimeSerializer;
 import ru.clevertec.mapper.MapperClient;
 import ru.clevertec.mapper.MapperClientImpl;
+import ru.clevertec.serializator.SerializatorXML;
+import ru.clevertec.serializator.impl.SerializatorXMLImpl;
 import ru.clevertec.service.ClientService;
 import ru.clevertec.service.impl.ClientServiceImpl;
-import ru.clevertec.util.WriterInPdf;
-import ru.clevertec.util.impl.WriterInPdfImpl;
 import ru.clevertec.valid.Validator;
 import ru.clevertec.valid.impl.ValidatorImpl;
+import ru.clevertec.writer.WriterInPdf;
+import ru.clevertec.writer.impl.WriterInPdfImpl;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -27,8 +30,8 @@ public class Main {
     public static void main(String[] args) {
 
         Validator validator = new ValidatorImpl();
-        ClientDao clientDao = new ClientDaoImpl(new ConnectionPoolManager());
         MapperClient mapperClient = new MapperClientImpl();
+        ClientDao clientDao = new ClientDaoImpl(new ConnectionPoolManager());
         ClientService clientService = new ClientServiceImpl(clientDao, mapperClient, validator);
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
@@ -42,46 +45,45 @@ public class Main {
                 LocalDate.parse("2000-01-01"));
         ClientDto clientDtoTwo = new ClientDto("Николай", "Николаев", "Николаевич",
                 LocalDate.parse("2000-01-01"));
-
+        String outputFilePath;
         String filePath = "Clevertec_Template.pdf";
-        String outputFilePath = "ResoultService.pdf";
-        WriterInPdf writerInPdf = new WriterInPdfImpl(gson);
+        WriterInPdf writerInPdf = WriterInPdfImpl.builder()
+                .gson(gson)
+                .build();
 
-     /*   // 1. Создание объекта.
+        // 1. Создание объекта.
         Client clientFirst = clientService.create(clientDto);
         json = gson.toJson(clientFirst);
         System.out.println("clientFirst = " + json);
+        outputFilePath = "ResoultCreate.pdf";
+        writerInPdf.write(clientFirst, filePath, outputFilePath);
 
-        writerInPdf.write(clientFirst, filePath, outputFilePath);*/
-
-       /* // 2. Получение объекта
+        // 2. Получение объекта
         ClientDto clientDtoFirst = clientService.findById(1);
         json = gson.toJson(clientDtoFirst);
         System.out.println("clientDtoFirst = " + json);
+        outputFilePath = "ResoultFindById.pdf";
+        writerInPdf.write(clientDtoFirst, filePath, outputFilePath);
 
-        writerInPdf.write(clientDtoFirst, filePath, outputFilePath);*/
-
-        /*// 3. Изменение объекта
+        // 3. Изменение объекта
         Client update = clientService.update(1, clientDtoTwo);
         json = gson.toJson(update);
         System.out.println("update = " + json);
-
-        writerInPdf.write(update, filePath, outputFilePath);*/
+        outputFilePath = "ResoultUpdate.pdf";
+        writerInPdf.write(update, filePath, outputFilePath);
 
         // Сериализация объекта
-        /*SerializatorXML serializatorXML = new SerializatorXMLImpl();
+        SerializatorXML serializatorXML = new SerializatorXMLImpl();
         String serialize = serializatorXML.serialize(clientDtoTwo);
         System.out.println("serialize = " + serialize);
-
-        WriterInPdf writerInPdfStr = new WriterInPdfImpl();
-        writerInPdf.write(serialize, filePath, outputFilePath);*/
+        outputFilePath = "ResoultSerializatorXML.pdf";
+        writerInPdf.write(serialize, filePath, outputFilePath);
 
         // 4. Получение заданного кол-ва объектов
         List<ClientDto> serviceByAll = clientService.findByAll(30);
         json = gson.toJson(serviceByAll);
         System.out.println("serviceByAll = " + json);
-
+        outputFilePath = "ResoultFindByAll.pdf";
         writerInPdf.write(serviceByAll, filePath, outputFilePath);
-
     }
 }
