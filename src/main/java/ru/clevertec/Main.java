@@ -2,11 +2,13 @@ package ru.clevertec;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import lombok.extern.slf4j.Slf4j;
 import ru.clevertec.dao.ClientDao;
 import ru.clevertec.dao.ConnectionPoolManager;
 import ru.clevertec.dao.impl.ClientDaoImpl;
 import ru.clevertec.dto.ClientDto;
 import ru.clevertec.entity.Client;
+import ru.clevertec.exception.ClientNotFoundException;
 import ru.clevertec.gson.LocalDateAdapter;
 import ru.clevertec.gson.LocalDateSerializer;
 import ru.clevertec.gson.OffsetDateTimeAdapter;
@@ -26,6 +28,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+@Slf4j
 public class Main {
     public static void main(String[] args) {
 
@@ -59,7 +62,14 @@ public class Main {
         writerInPdf.write(clientFirst, filePath, outputFilePath);
 
         // 2. Получение объекта
-        ClientDto clientDtoFirst = clientService.findById(1);
+        ClientDto clientDtoFirst = null;
+
+        try {
+            clientDtoFirst = clientService.findById(150);
+        } catch (ClientNotFoundException e) {
+            log.error(e.getMessage());
+        }
+
         json = gson.toJson(clientDtoFirst);
         System.out.println("clientDtoFirst = " + json);
         outputFilePath = "ResoultFindById.pdf";

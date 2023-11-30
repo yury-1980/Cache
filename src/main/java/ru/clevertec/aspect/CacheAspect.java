@@ -13,6 +13,7 @@ import ru.clevertec.dao.impl.ClientDaoImpl;
 import ru.clevertec.dto.ClientDto;
 import ru.clevertec.entity.Client;
 import ru.clevertec.exception.ClientDtoNotValidate;
+import ru.clevertec.exception.ClientNotFoundException;
 import ru.clevertec.mapper.MapperClient;
 import ru.clevertec.mapper.MapperClientImpl;
 import ru.clevertec.valid.Validator;
@@ -44,7 +45,7 @@ public class CacheAspect {
     private final Validator validator = new ValidatorImpl();
 
     @Around("execution(* ru.clevertec.service.impl.ClientServiceImpl.findById(..))")
-    public ClientDto aroundFindById(ProceedingJoinPoint joinPoint) {
+    public ClientDto aroundFindById(ProceedingJoinPoint joinPoint) throws ClientNotFoundException {
         Object[] args = joinPoint.getArgs();
         Long id = (Long) args[0];
         Client client = cache.get(id);
@@ -59,8 +60,8 @@ public class CacheAspect {
 
                 return mapper.toClientDto(client);
 
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
+            } catch (RuntimeException e) {
+                throw new ClientNotFoundException(id);
             }
         }
     }
